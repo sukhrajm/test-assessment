@@ -2,16 +2,13 @@ package co.copper.test
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
-
 import com.sbuslab.http.RestService
 import com.sbuslab.utils.Logging
-
-import co.copper.test.routes.TestRoutes
+import co.copper.test.routes.{TestRoutes, UserRoutes}
 
 object Application extends App with Logging {
   val ctx = new AnnotationConfigApplicationContext(classOf[ApplicationConfiguration])
@@ -26,7 +23,8 @@ object Application extends App with Logging {
       metrics("all") {
         toStrictEntity(5.seconds) {
           sbusContext { implicit context ⇒
-            pathPrefix("test")(ctx.getBean(classOf[TestRoutes]).anonymousRoutes)
+            pathPrefix("test")(ctx.getBean(classOf[TestRoutes]).anonymousRoutes) ~
+            pathPrefix("users")(ctx.getBean(classOf[UserRoutes]).anonymousRoutes)
           }
         }
       }
